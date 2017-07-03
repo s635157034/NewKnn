@@ -13,9 +13,6 @@ public class DataInfo {
     private int wrong=0;
     private int tmpWrong=0;
 
-    public double getWeight() {
-        return weight;
-    }
     public DataInfo(String input) {
         String[] str = input.split(",");
         int len=str.length;
@@ -31,12 +28,7 @@ public class DataInfo {
         right=Integer.valueOf(str[0]);
         wrong=Integer.valueOf(str[1]);
     }
-    public DistanceInfo calDistance(DataInfo dataInfo,double maxDistance){
-        double distance=Outh(point,dataInfo.point);
-        if (distance < maxDistance){
-            return new DistanceInfo(dataInfo, dataInfo.label, distance);
-        }else return null;
-    }
+
     public static double Outh(double[] testData, double[] inData) {
         float distance =0.0f;
         int len=testData.length;
@@ -45,6 +37,18 @@ public class DataInfo {
         }
         return Math.sqrt(distance);
     }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public DistanceInfo calDistance(DataInfo dataInfo, double maxDistance) {
+        double distance = Outh(point, dataInfo.point);
+        if (distance < maxDistance) {
+            return new DistanceInfo(dataInfo, dataInfo.label, distance);
+        } else return null;
+    }
+
     //更新正确和错误次数
     public void update(){
         right+=tmpRight;
@@ -82,6 +86,7 @@ public class DataInfo {
      * 权重函数
      */
     private void calWeight(){
+        // TODO: 17-6-27 修改权重函数 
         weight = Math.atan((1 + right) / (1 + wrong)-1);
     }
 }
@@ -91,14 +96,14 @@ class DistanceInfo implements Comparable{
     String label;
     double distance;
 
-    public double getWeight(){
-        return dataInfo.getWeight();
-    }
-
     public DistanceInfo(DataInfo dataInfo, String label, double distance) {
         this.dataInfo = dataInfo;
         this.label = label;
         this.distance = distance;
+    }
+
+    public double getWeight() {
+        return dataInfo.getWeight();
     }
 
     @Override

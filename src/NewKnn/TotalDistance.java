@@ -37,15 +37,21 @@ public class TotalDistance {
         }
         return max;
     }
-    public String getLabel(boolean weight){
+
+    public String getLabel(int weight) {
         // TODO: 17-6-26 添加权重部分 
         Arrays.sort(total);
-        int count = 0;
-        int longest = 0;
-        if(weight){
+        double count = 0;
+        double longest = 0;
+        if (weight > 0) {
             for (int i = 0; i < KnnMain.K-1; i++) {
                 if (total[i].label.equals(total[i+1].label)) {
-                    count+=total[i].getWeight()+99;
+                    if (weight == 1) {
+                        count += total[i].getWeight() + 1.57;
+                    } else if (weight == 2) {
+                        if (total[i].distance == 0) {
+                        } else count += 1 / Math.sqrt(total[i].distance);
+                    }
                 } else {
                     count = 0;// 如果不等于，就换到了下一个数，那么计算下一个数的次数时，count的值应该重新赋值为一
                     continue;
@@ -73,7 +79,9 @@ public class TotalDistance {
         return mostLabel;
     }
     public void addWeight(String label){
-        for (int i = 1; i < KnnMain.K-1; i++) {
+        for (int i = 0; i < KnnMain.K; i++) {
+            if (total[i].distance == 0)
+                continue;
             if(label.equals(total[i].label)){
                 total[i].dataInfo.addRight();
             }else {

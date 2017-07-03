@@ -11,8 +11,9 @@ import java.util.Scanner;
  * Created by root on 17-6-22.
  */
 public class KnnMain {
-    private static int Max=1;
-    public static int K=10;
+    public static final int K = 5;
+    public static int NUMBER = 768;
+    private static int Max = 1000;
     private static ArrayList<DataInfo> trainData =null;
     private static ArrayList<DataInfo> testData = null;
 
@@ -21,8 +22,11 @@ public class KnnMain {
         String trainInput = "test/trainData";
         String trainPath = "test/train";
         String outputPath = "test/out";
-        Train(inputPath,trainPath,200);
-        Test(inputPath,trainPath,outputPath,200,true);
+        Train(inputPath, trainPath, NUMBER);
+        Test(inputPath, trainPath, outputPath, NUMBER, 1);
+        /*for(double i=-10;i<10;i++)
+            System.out.println(Math.atan(i));*/
+
     }
 
 
@@ -49,7 +53,8 @@ public class KnnMain {
                     }
                 }
                 //将对错加到临时变量中
-                totalDistance.addWeight(aTestData.label);
+                if (!aTestData.label.equals(totalDistance.getLabel(1)))
+                    totalDistance.addWeight(aTestData.label);
             }
 
             //更新对错次数
@@ -61,10 +66,11 @@ public class KnnMain {
         CalTime.End();
     }
 
-    public static void Test(String inputPath,String trainPath,String outputPath,int number,boolean weight) throws Exception {
+    public static void Test(String inputPath, String trainPath, String outputPath, int number, int weight) throws Exception {
         CalTime.Start();
         int count=0;
         testData = new ArrayList<>(number);
+        trainData = new ArrayList<>(number);
         readFiles(inputPath,testData);
         readTrainFiles(trainPath);
         for (DataInfo aTestData : testData) {
@@ -87,6 +93,7 @@ public class KnnMain {
         }
         writeTestFIles(outputPath);
         System.out.println(count);
+        System.out.println((double) count / testData.size());
         CalTime.End();
     }
 
@@ -110,8 +117,10 @@ public class KnnMain {
         FileInputStream fs = new FileInputStream(path);
         Scanner scanner = new Scanner(fs);
         while (scanner.hasNext()){
-            String[] str=scanner.nextLine().split("#");
-            trainData.add(new DataInfo(str[0],str[1]));
+            String[] str = scanner.nextLine().split("#");
+            DataInfo tmp = new DataInfo(str[0], str[1]);
+            tmp.update();
+            trainData.add(tmp);
         }
     }
     public static void writeTestFIles(String path) throws  Exception{
